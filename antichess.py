@@ -61,7 +61,38 @@ def minimax(board: chess.Board, depth: int, alpha: float, beta: float) -> float:
 
 def evaluate_board(board: chess.Board) -> float:
     # TODO: Implement board evaluation function
-    return 0
+    to_play = board.turn
+    our_pieces = (
+        len(board.pieces(chess.PAWN, to_play)),
+        len(board.pieces(chess.KNIGHT, to_play)),
+        len(board.pieces(chess.BISHOP, to_play)),
+        len(board.pieces(chess.ROOK, to_play)),
+        len(board.pieces(chess.QUEEN, to_play)),
+        len(board.pieces(chess.KING, to_play)),
+    )
+    their_pieces = (
+        len(board.pieces(chess.PAWN, not to_play)),
+        len(board.pieces(chess.KNIGHT, not to_play)),
+        len(board.pieces(chess.BISHOP, not to_play)),
+        len(board.pieces(chess.ROOK, not to_play)),
+        len(board.pieces(chess.QUEEN, not to_play)),
+        len(board.pieces(chess.KING, not to_play)),
+    )
+    eval = 1*(our_pieces[0] - their_pieces[0]) + \
+    3*(our_pieces[1] - their_pieces[1]) + \
+    3*(our_pieces[2] - their_pieces[2]) + \
+    5*(our_pieces[3] - their_pieces[3]) + \
+    9*(our_pieces[4] - their_pieces[4])
+    if board.is_game_over():
+        winner = board.outcome().winner
+        if winner == None: # draw case, should have eval of 0? i think
+            return 0
+        elif winner == to_play:
+            return 200 
+        else:
+            return -200
+    else:
+        return eval
 
 # argparse stuff
 parser = argparse.ArgumentParser()
@@ -82,14 +113,17 @@ while not board.is_game_over():
         move = get_best_move(board)
         if print_board:
             print(f"AI moves: {move}")
+        else:
+            print(f"{move}")
         board.push(move)
     else:
         # Prompt the user for a move
         if print_board:
             move = chess.Move.from_uci(input("Enter your move: "))
         else:
-            move = chess.Move.from_uci(input())            
-        if move not in board.legal_moves: 
+            move = chess.Move.from_uci(input())  
+        ac_legal_moves = anti_chess_legal_moves(board)          
+        if move not in ac_legal_moves: 
             print("Illegal move, try again.")
             continue
         board.push(move)
