@@ -160,9 +160,9 @@ def evaluate_board(board: chess.Board) -> float:
         if winner == None: # draw case, should have eval of 0? i think
             return 0
         elif winner == to_play:
-            return 200 
+            return 20000 
         else:
-            return -200
+            return -20000
     else:
         return eval
 
