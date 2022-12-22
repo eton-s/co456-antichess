@@ -15,6 +15,27 @@ BishopVal   = 30
 RookVal     = 50
 QweenVal    = 90
 
+king_pos_vals_white = [
+         22, 40, 10,  0,  0, 10, 40, 22,
+         25, 10,  0,-10,-10,  0, 10, 25,
+        -20,-25,-30,-35,-35,-30,-25,-20,
+        -25,-30,-30,-45,-45,-30,-30,-25,
+        -30,-42,-45,-55,-55,-45,-42,-30,
+        -35,-42,-45,-55,-55,-45,-42,-35,
+        -35,-42,-45,-55,-55,-45,-42,-35,
+        -35,-40,-42,-50,-50,-42,-40,-35,
+    ]
+king_pos_vals_black = [
+        -35,-40,-42,-50,-50,-42,-40,-35,
+        -35,-42,-45,-55,-55,-45,-42,-35,
+        -35,-42,-45,-55,-55,-45,-42,-35,
+        -30,-42,-45,-55,-55,-45,-42,-30,
+        -25,-30,-30,-45,-45,-30,-30,-25,
+        -20,-25,-30,-35,-35,-30,-25,-20,
+         25, 10,  0,-10,-10,  0, 10, 25,
+         22, 40, 10,  0,  0, 10, 40, 22
+    ]
+
 
 def get_material_val(board: chess.Board) -> int:
     to_play = board.turn
@@ -43,6 +64,7 @@ def get_material_val(board: chess.Board) -> int:
     return eval
 
 
+
 def king_safety_val(board: chess.Board) -> int:
     to_play = board.turn
     return king_safety_val_each(board, to_play) - king_safety_val_each(board, not to_play)
@@ -57,7 +79,94 @@ def king_safety_val_each(board: chess.Board, color: chess.Color) -> int:
             continue
         elif (piece.piece_type is chess.KING and piece.color is color):
             king_pos = square
-    return 0
+    
+    left  = True
+    right = True
+    up    = True
+    down  = True
+    
+    if (0  <= king_pos <=  7):
+        down = False
+    if (56 <= king_pos <= 63):
+        up = False
+    if (king_pos % 8 is 0):
+        left = False
+    if ((king_pos + 1) % 8 is 0):
+        right = False
+
+    if (color):
+        if (left and up):
+            piece = board.piece_at(king_pos+7)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 20
+        if (up):
+            piece = board.piece_at(king_pos+8)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 20
+        if (right and up):
+            piece = board.piece_at(king_pos+9)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 20
+        if (left):
+            piece = board.piece_at(king_pos-1)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 15
+        if (right):
+            piece = board.piece_at(king_pos+1)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 15
+        if (left and down):
+            piece = board.piece_at(king_pos-9)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 10
+        if (down):
+            piece = board.piece_at(king_pos-8)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 10
+        if (right and down):
+            piece = board.piece_at(king_pos-7)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 10
+
+    if (not color):
+        if (left and up):
+            piece = board.piece_at(king_pos+7)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 00
+        if (up):
+            piece = board.piece_at(king_pos+8)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 00
+        if (right and up):
+            piece = board.piece_at(king_pos+9)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 10
+        if (left):
+            piece = board.piece_at(king_pos-1)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 15
+        if (right):
+            piece = board.piece_at(king_pos+1)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 15
+        if (left and down):
+            piece = board.piece_at(king_pos-9)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 20
+        if (down):
+            piece = board.piece_at(king_pos-8)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 20
+        if (right and down):
+            piece = board.piece_at(king_pos-7)
+            if (piece):
+                val += (((piece.color is color)*2)-1) * 20
+
+        if(color):
+            val += king_pos_vals_white[king_pos]
+        else:
+            val += king_pos_vals_black[king_pos]
+    return val
 
 
 def can_castle_val(board: chess.Board) -> int:
@@ -206,7 +315,8 @@ while not board.is_game_over():
         print(board)
     if board.turn == side:
         # Let the AI make the move
-        move = get_best_move(board, depth=2,player_white)
+        curr_depth = 2
+        move = get_best_move(board, curr_depth, player_white)
         #TODO: depth = 2 at first and increase as number of moves increase? increase depth by one for every 10 moves?
         if print_board:
             print(f"AI moves: {move}")
