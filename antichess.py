@@ -203,9 +203,9 @@ def get_best_move(board: chess.Board, player_white: bool) -> chess.Move:
 
     # Determine depth
     depth = 2
-    if ac_legal_moves.count() <= 5:
+    if len(list(ac_legal_moves)) <= 5:
         depth = 4
-    elif ac_legal_moves.count() <= 8:
+    elif len(list(ac_legal_moves)) <= 8:
         depth = 3
 
     # Timer limit fallback
