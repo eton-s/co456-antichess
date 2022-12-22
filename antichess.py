@@ -2,6 +2,7 @@ import chess
 from chess import WHITE, BLACK, PIECE_TYPES
 import argparse
 import math
+import time
 
 # PawnMG      = 10,   PawnLG      = 10
 # KnightMG    = 40,   KnightLG    = 40
@@ -192,6 +193,8 @@ def anti_chess_legal_moves(board: chess.Board):
     else:
         return board.legal_moves  # else same as normal chess
 
+TIME_LIMIT = 10 # max time in seconds
+
 # Determining best move with 3 levels of depth
 def get_best_move(board: chess.Board, player_white: bool) -> chess.Move:
     best_move = None
@@ -205,11 +208,14 @@ def get_best_move(board: chess.Board, player_white: bool) -> chess.Move:
     elif ac_legal_moves.count() <= 8:
         depth = 3
 
+    # Timer limit fallback
+    start_time = time.time()
+    
     for move in ac_legal_moves:
         if board.gives_check(move):
             return move
         board.push(move)
-        score = minimax(board, depth, -math.inf, math.inf, player_white)
+        score = minimax(board, depth, -math.inf, math.inf, player_white, start_time)
         board.pop()
 
         if player_white:
@@ -220,13 +226,18 @@ def get_best_move(board: chess.Board, player_white: bool) -> chess.Move:
             if score < best_score:
                 best_score = score
                 best_move = move
+        
+        # Timer limit fallback
+        end_time = time.time()
+        if (end_time - start_time > TIME_LIMIT):
+            break
 
     print(best_score)
     return best_move
 
 # Minimax
 # Black: minimize; White: maximize
-def minimax(board: chess.Board, depth: int, alpha: float, beta: float, player_white: bool) -> float:
+def minimax(board: chess.Board, depth: int, alpha: float, beta: float, player_white: bool, start_time: int) -> float:
     # Game over or max depth reached
     if depth == 0 or board.is_game_over():
         return evaluate_board(board)
@@ -240,7 +251,7 @@ def minimax(board: chess.Board, depth: int, alpha: float, beta: float, player_wh
         board.push(move)
 
         # Recursively call minimax to get the score of this move
-        score = minimax(board, depth - 1, alpha, beta, player_white)
+        score = minimax(board, depth - 1, alpha, beta, player_white, start_time)
 
         board.pop()
 
@@ -254,6 +265,10 @@ def minimax(board: chess.Board, depth: int, alpha: float, beta: float, player_wh
             best_score = min(best_score, score)
             beta = min(beta, best_score)
 
+        end_time = time.time()
+        if (end_time - start_time > TIME_LIMIT):
+            return best_score
+        
         # Prune
         if beta <= alpha:
             break
