@@ -9,65 +9,62 @@ import math
 # RookMG      = 50,   RookLG      = 60
 # QweenMG     = 80,   QweenLG     = 90
 
-PawnVal     = 10
-KnightVal   = 30
-BishopVal   = 30
-RookVal     = 50
-QweenVal    = 90
+PawnVal = 10
+KnightVal = 30
+BishopVal = 30
+RookVal = 50
+QweenVal = 90
 
 king_pos_vals_white = [
-         22, 40, 10,  0,  0, 10, 40, 22,
-         25, 10,  0,-10,-10,  0, 10, 25,
-        -20,-25,-30,-35,-35,-30,-25,-20,
-        -25,-30,-30,-45,-45,-30,-30,-25,
-        -30,-42,-45,-55,-55,-45,-42,-30,
-        -35,-42,-45,-55,-55,-45,-42,-35,
-        -35,-42,-45,-55,-55,-45,-42,-35,
-        -35,-40,-42,-50,-50,-42,-40,-35,
-    ]
+    22, 40, 10,  0,  0, 10, 40, 22,
+    25, 10,  0, -10, -10,  0, 10, 25,
+    -20, -25, -30, -35, -35, -30, -25, -20,
+    -25, -30, -30, -45, -45, -30, -30, -25,
+    -30, -42, -45, -55, -55, -45, -42, -30,
+    -35, -42, -45, -55, -55, -45, -42, -35,
+    -35, -42, -45, -55, -55, -45, -42, -35,
+    -35, -40, -42, -50, -50, -42, -40, -35,
+]
 king_pos_vals_black = [
-        -35,-40,-42,-50,-50,-42,-40,-35,
-        -35,-42,-45,-55,-55,-45,-42,-35,
-        -35,-42,-45,-55,-55,-45,-42,-35,
-        -30,-42,-45,-55,-55,-45,-42,-30,
-        -25,-30,-30,-45,-45,-30,-30,-25,
-        -20,-25,-30,-35,-35,-30,-25,-20,
-         25, 10,  0,-10,-10,  0, 10, 25,
-         22, 40, 10,  0,  0, 10, 40, 22
-    ]
+    -35, -40, -42, -50, -50, -42, -40, -35,
+    -35, -42, -45, -55, -55, -45, -42, -35,
+    -35, -42, -45, -55, -55, -45, -42, -35,
+    -30, -42, -45, -55, -55, -45, -42, -30,
+    -25, -30, -30, -45, -45, -30, -30, -25,
+    -20, -25, -30, -35, -35, -30, -25, -20,
+    25, 10,  0, -10, -10,  0, 10, 25,
+    22, 40, 10,  0,  0, 10, 40, 22
+]
 
 
 def get_material_val(board: chess.Board) -> int:
-    to_play = board.turn
-    our_pieces = (
-        len(board.pieces(chess.PAWN, to_play)),
-        len(board.pieces(chess.KNIGHT, to_play)),
-        len(board.pieces(chess.BISHOP, to_play)),
-        len(board.pieces(chess.ROOK, to_play)),
-        len(board.pieces(chess.QUEEN, to_play)),
-        len(board.pieces(chess.KING, to_play)),
+    white_pieces = (
+        len(board.pieces(chess.PAWN, WHITE)),
+        len(board.pieces(chess.KNIGHT, WHITE)),
+        len(board.pieces(chess.BISHOP, WHITE)),
+        len(board.pieces(chess.ROOK, WHITE)),
+        len(board.pieces(chess.QUEEN, WHITE)),
+        len(board.pieces(chess.KING, WHITE)),
     )
-    their_pieces = (
-        len(board.pieces(chess.PAWN, not to_play)),
-        len(board.pieces(chess.KNIGHT, not to_play)),
-        len(board.pieces(chess.BISHOP, not to_play)),
-        len(board.pieces(chess.ROOK, not to_play)),
-        len(board.pieces(chess.QUEEN, not to_play)),
-        len(board.pieces(chess.KING, not to_play)),
+    black_pieces = (
+        len(board.pieces(chess.PAWN, BLACK)),
+        len(board.pieces(chess.KNIGHT, BLACK)),
+        len(board.pieces(chess.BISHOP, BLACK)),
+        len(board.pieces(chess.ROOK, BLACK)),
+        len(board.pieces(chess.QUEEN, BLACK)),
+        len(board.pieces(chess.KING, BLACK)),
     )
     eval = \
-    PawnVal     *(our_pieces[0] - their_pieces[0]) + \
-    KnightVal   *(our_pieces[1] - their_pieces[1]) + \
-    BishopVal   *(our_pieces[2] - their_pieces[2]) + \
-    RookVal     *(our_pieces[3] - their_pieces[3]) + \
-    QweenVal    *(our_pieces[4] - their_pieces[4])
+        PawnVal * (white_pieces[0] - black_pieces[0]) + \
+        KnightVal * (white_pieces[1] - black_pieces[1]) + \
+        BishopVal * (white_pieces[2] - black_pieces[2]) + \
+        RookVal * (white_pieces[3] - black_pieces[3]) + \
+        QweenVal * (white_pieces[4] - black_pieces[4])
     return eval
 
 
-
 def king_safety_val(board: chess.Board) -> int:
-    to_play = board.turn
-    return king_safety_val_each(board, to_play) - king_safety_val_each(board, not to_play)
+    return king_safety_val_each(board, WHITE) - king_safety_val_each(board, BLACK)
 
 
 def king_safety_val_each(board: chess.Board, color: chess.Color) -> int:
@@ -79,13 +76,13 @@ def king_safety_val_each(board: chess.Board, color: chess.Color) -> int:
             continue
         elif (piece.piece_type is chess.KING and piece.color is color):
             king_pos = square
-    
-    left  = True
+
+    left = True
     right = True
-    up    = True
-    down  = True
-    
-    if (0  <= king_pos <=  7):
+    up = True
+    down = True
+
+    if (0 <= king_pos <= 7):
         down = False
     if (56 <= king_pos <= 63):
         up = False
@@ -170,8 +167,7 @@ def king_safety_val_each(board: chess.Board, color: chess.Color) -> int:
 
 
 def can_castle_val(board: chess.Board) -> int:
-    to_play = board.turn
-    return can_castle_val_each(board, to_play) - can_castle_val_each(board, not to_play)
+    return can_castle_val_each(board, WHITE) - can_castle_val_each(board, BLACK)
 
 
 def can_castle_val_each(board: chess.Board, color: chess.Color) -> int:
@@ -179,24 +175,10 @@ def can_castle_val_each(board: chess.Board, color: chess.Color) -> int:
     two_castles = board.has_kingside_castling_rights(
         color) and board.has_queenside_castling_rights(color)
     return (one_castle * 75) + (two_castles * 25)
-    '''
-    if (color):
-        can_castle_one = bool(board.castling_rights & chess.BB_A1) or  bool(board.castling_rights & chess.BB_H1)
-        can_castle_two = bool(board.castling_rights & chess.BB_A1) and bool(board.castling_rights & chess.BB_H1)
-    else:
-        can_castle_one = bool(board.castling_rights & chess.BB_A8) or  bool(board.castling_rights & chess.BB_H8)
-        can_castle_two = bool(board.castling_rights & chess.BB_H8) and bool(board.castling_rights & chess.BB_H8)
-    return can_castle_one * 75 + can_castle_two * 25
-    '''
 
 
 def under_check_val(board: chess.Board) -> int:
-    to_play = board.turn
     return - 500 * board.is_check()
-    #return under_check_val_each(board, to_play) - under_check_val_each(board, not to_play)
-
-# def under_check_val_each(board: chess.Board, color: chess.Color) -> int:
-#    return 
 
 
 # Determine list of legal moves in antichess given a board
@@ -211,10 +193,18 @@ def anti_chess_legal_moves(board: chess.Board):
         return board.legal_moves  # else same as normal chess
 
 # Determining best move with 3 levels of depth
-def get_best_move(board: chess.Board, depth: int, player_white: bool) -> chess.Move:
+def get_best_move(board: chess.Board, player_white: bool) -> chess.Move:
     best_move = None
-    best_score = -math.inf
+    best_score = -math.inf if player_white else math.inf
     ac_legal_moves = anti_chess_legal_moves(board)
+
+    # Determine depth
+    depth = 2
+    if ac_legal_moves.count() <= 5:
+        depth = 4
+    elif ac_legal_moves.count() <= 8:
+        depth = 3
+
     for move in ac_legal_moves:
         if board.gives_check(move):
             return move
@@ -222,10 +212,16 @@ def get_best_move(board: chess.Board, depth: int, player_white: bool) -> chess.M
         score = minimax(board, depth, -math.inf, math.inf, player_white)
         board.pop()
 
-        if score > best_score:
-            best_score = score
-            best_move = move
+        if player_white:
+            if score > best_score:
+                best_score = score
+                best_move = move
+        else:
+            if score < best_score:
+                best_score = score
+                best_move = move
 
+    print(best_score)
     return best_move
 
 # Minimax
@@ -266,8 +262,6 @@ def minimax(board: chess.Board, depth: int, alpha: float, beta: float, player_wh
 
 # Heuristic
 def evaluate_board(board: chess.Board) -> float:
-    # TODO: Implement board evaluation function
-    to_play = board.turn
     eval = \
         get_material_val(board) + \
         king_safety_val(board) + \
@@ -278,10 +272,10 @@ def evaluate_board(board: chess.Board) -> float:
         winner = board.outcome().winner
         if winner == None:  # draw case, should have eval of 0? i think
             return 0
-        elif winner == to_play:
-            return 20000
+        elif winner == WHITE:
+            return math.inf
         else:
-            return -20000
+            return -math.inf
     else:
         return eval
 
@@ -301,7 +295,6 @@ player_white = side == BLACK
 # Initialize board
 board = chess.Board()
 num_moves = 0
-curr_depth = 2
 
 # Running the game
 while not board.is_game_over():
@@ -317,17 +310,13 @@ while not board.is_game_over():
         print(board)
     if board.turn == side:
         # Let the AI make the move
-        move = get_best_move(board, curr_depth, player_white)
+        move = get_best_move(board, player_white)
         if print_board:
             print(f"AI moves: {move}")
         else:
             print(f"{move}")
         board.push(move)
 
-        num_moves += 1
-        if num_moves == 10:
-            curr_depth += 1
-            num_moves = 0
     else:
         # Prompt the user for a move
         if print_board:
