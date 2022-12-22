@@ -89,9 +89,9 @@ def king_safety_val_each(board: chess.Board, color: chess.Color) -> int:
         down = False
     if (56 <= king_pos <= 63):
         up = False
-    if (king_pos % 8 is 0):
+    if (king_pos % 8 == 0):
         left = False
-    if ((king_pos + 1) % 8 is 0):
+    if ((king_pos + 1) % 8 == 0):
         right = False
 
     if (color):
@@ -292,7 +292,7 @@ parser.add_argument('side')  # black or white
 # print board/prompts iff true
 parser.add_argument('--print', action="store_true")
 side = BLACK  # side the AI plays on
-if parser.parse_args().side == "black":
+if parser.parse_args().side == "white":
     side = WHITE
 print_board = parser.parse_args().print
 player_white = side == BLACK
@@ -300,6 +300,8 @@ player_white = side == BLACK
 
 # Initialize board
 board = chess.Board()
+num_moves = 0
+curr_depth = 2
 
 # Running the game
 while not board.is_game_over():
@@ -315,14 +317,17 @@ while not board.is_game_over():
         print(board)
     if board.turn == side:
         # Let the AI make the move
-        curr_depth = 2
         move = get_best_move(board, curr_depth, player_white)
-        #TODO: depth = 2 at first and increase as number of moves increase? increase depth by one for every 10 moves?
         if print_board:
             print(f"AI moves: {move}")
         else:
             print(f"{move}")
         board.push(move)
+
+        num_moves += 1
+        if num_moves == 10:
+            curr_depth += 1
+            num_moves = 0
     else:
         # Prompt the user for a move
         if print_board:
