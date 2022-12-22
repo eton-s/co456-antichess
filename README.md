@@ -1,8 +1,14 @@
 # co456-antichess
-CO456 final project for team MonkeyCat (Ethan Santos, Yiwen Dai, Ginyat Lyatifov)
+CO456 final project for team MonkeyCat (Ethan Santos, Yiwen Dai, Ginyat Lyatifov).
 
-usage: antichess.py [-h] [--print] side
+### Usage
 
---print argument for prompts and printing board every turn
+Uses the `chess` python library. Install with
 
-side argument should be either "black" or "white"
+``pip install chess``
+
+usage: `antichess.py [-h] [--print] side`
+
+- side argument should be either "black" or "white"
+- include --print argument for prompts and printing board every turn (otherwise do not use)
+
