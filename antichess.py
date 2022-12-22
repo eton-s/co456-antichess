@@ -195,6 +195,14 @@ def anti_chess_legal_moves(board: chess.Board):
 
 TIME_LIMIT = 5 # max time in seconds
 
+
+def has_captures(board: chess.Board):
+    moves = []
+    for move in board.legal_moves:
+        if board.is_capture(move):
+            return True
+    return False
+
 # Determining best move with 3 levels of depth
 def get_best_move(board: chess.Board, player_white: bool) -> chess.Move:
     best_move = None
@@ -203,10 +211,12 @@ def get_best_move(board: chess.Board, player_white: bool) -> chess.Move:
 
     # Determine depth
     depth = 2
-    if len(list(ac_legal_moves)) <= 5:
+    if len(list(board.legal_moves)) <= 5:
         depth = 4
-    elif len(list(ac_legal_moves)) <= 8:
+    elif len(list(board.legal_moves)) <= 8:
         depth = 3
+    if has_captures(board):
+        depth += 1
 
     # Timer limit fallback
     start_time = time.time()
