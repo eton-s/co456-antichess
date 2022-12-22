@@ -175,7 +175,7 @@ def can_castle_val_each(board: chess.Board, color: chess.Color) -> int:
     one_castle = board.has_castling_rights(color)
     two_castles = board.has_kingside_castling_rights(
         color) and board.has_queenside_castling_rights(color)
-    return (one_castle * 75) + (two_castles * 25)
+    return (one_castle * 10) + (two_castles * 5)
 
 
 def under_check_val(board: chess.Board) -> int:
