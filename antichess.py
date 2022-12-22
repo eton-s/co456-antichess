@@ -232,7 +232,6 @@ def get_best_move(board: chess.Board, player_white: bool) -> chess.Move:
         if (end_time - start_time > TIME_LIMIT):
             break
 
-    print(best_score)
     return best_move
 
 # Minimax
