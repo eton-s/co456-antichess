@@ -211,7 +211,7 @@ def anti_chess_legal_moves(board: chess.Board):
     else:
         return board.legal_moves  # else same as normal chess
 
-TIME_LIMIT = 5 # max time in seconds
+TIME_LIMIT = 10 # max time in seconds
 
 # Determining best move with 3 levels of depth
 def get_best_move(board: chess.Board, depth: int, player_white: bool) -> chess.Move:
